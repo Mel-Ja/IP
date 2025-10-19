@@ -33,6 +33,8 @@ def pertenece_for (s: list[int], e: int) -> bool:
     for posicion in range(0, longitud_lista, 1):
         if s[posicion] == e:
             return True
+        
+    return False
 
 
 def pertenece_for2 (s: list[int], e:int) -> bool:
@@ -566,18 +568,224 @@ print("Hola->",sin_vocales("Hola"))
 print("Palabra->",sin_vocales("Palabra"))
 print("Melany->",sin_vocales("Melany"))
 print("---")
+
+""" Programa principal para probar sin_vocales 
+
 print("### TE DEVUELVO TU PALABRA SIN VOCALES ###")
 ingreso = str(input("Ingresa tu palabra: "))
+
 
 while ingreso != '0':
 
     print(f"Haz ingresado {ingreso}, sin vocales es: ", sin_vocales(ingreso))
     ingreso = input("Ingresa otra palabra o escribe 0 para finalizar: ")
+"""
+
 
 """ (4)
 problema reemplaza_vocales (in s:seq<Char>) : seq<Char> {
-    requiere: { |res| = |s| }
-    asegura: { Para todo i perteneciente a Z, si 0 <= i < |res| -> ( pertenece(<'a','e','i','o','u'>, s[i] ^ res[i] = '_') o (¬pertenece(<'a','e','i','o','u'>, s[i]) ^ res[i] = s[i])  }
+    requiere: { True }
+    asegura: { |res| = |s| }
+    asegura: { Para todo i perteneciente a Z, si 0 <= i < |res| -> ( pertenece(<'a','e','i','o','u'>, s[i] ^ res[i] = '_') o (¬pertenece(<'a','e','i','o','u'>, s[i]) ^ res[i] = s[i]))  }
 }
 
 """
+
+def reemplaza_vocales(palabra: str) -> str:
+    nueva_palabra: str = ""
+    vocales: list[str] = ["a", "e", "i", "o", "u", "á", "é", "í", "ó", "ú"]
+    for posicion in range(len(palabra)):
+        if palabra.lower()[posicion] in vocales:
+            nueva_palabra += "_"
+        else:
+            nueva_palabra += palabra[posicion]
+    
+    return nueva_palabra
+
+
+""" (5)
+problema da_vuelta_str (in s:seq<Char>) : seq<Char> {
+    requiere: { True }
+    asegura: { |res| = |s| }
+    asegura: { Para todo i ∈ Z si 0 <= i < |res| -> res[i] = s[|s|-i-1] }
+}
+
+da_vuelta_str("Hola") -> "aloH"
+
+"""
+def da_vuelta_str (palabra: str) -> str:
+    res: str = ""
+    for posicion in range(len(palabra), 0, -1):
+        res += palabra[posicion-1]
+    
+    return res
+
+def da_vuelta_str_while (palabra: str) -> str:
+    res: str = ""
+    i: int = len(palabra) - 1
+    while i >= 0:
+        res += palabra[i]
+        i -= 1
+    return res
+
+print("Melany ->", da_vuelta_str_while("Melany"))
+print(" ->", da_vuelta_str_while(""))
+print(" 1234 ->", da_vuelta_str_while("1234"))
+
+""" (6)
+problema eliminar_repetidos (in s: seq<Char>) : seq<Char> {
+    requiere: { True }
+    asegura: { (|res| <= |s|) ^ ( para todo i ∈ Z si 0 <= i <= |s| -> pertenece(s[i], res)) ^ (para todo i,j ∈ Z si (0 <= i,j < |res| ^ i != j) -> res[i] != res[j]  )  }
+}
+
+"""
+
+def eliminar_repetidos(palabra: str) -> str:
+    res: str = ""
+    i: int = 0
+    for letra in palabra:
+        if letra not in res:
+            res += letra
+    return res
+
+print("Ba n ana->", eliminar_repetidos("Ba n ana"))
+print("Hola todo bien->", eliminar_repetidos("Hola todo bien"))
+
+# ej 3
+""" Implementar una función para conocer el estado de aprobación de una materia a partir de las notas obtenidas por un/a alumno/a cumpliendo con la siguiente especificación:
+
+problema resultadoMateria (in notas: seq<Z>) : Z {
+    requiere: { |notas| > 0 }
+    requiere: { Para todo  i ∈ Z si 0 <= i < |notas| -> 0 <= notas[i] <= 10   }
+    asegura: { res = 1 <-> todos los elementos de notas son mayores o iguales a 4 y el promedio es mayor o igual a 7 }
+    asegura: { res = 2 <-> todos los elementos de notas son mayores o iguales a 4 y el promedio está entre 4(inclusive) y 7 }
+    asegura: { res = 3 <-> alguno de los elementos de notas es menor a 4 o el promedio es menor a 4 }
+}
+
+"""
+def mayor_o_igual_4(nota: int) -> bool:
+    return nota >= 4
+
+def resultadoMateria(notas: list[int]) -> int:
+    suma_notas: int = 0
+    res: int = 3
+
+    for nota in notas:
+        suma_notas += nota
+        if not mayor_o_igual_4(nota):
+            return res
+    
+    promedio: float = suma_notas / len(notas)
+
+    if promedio >= 7:
+        res = 1
+        return res
+    elif promedio >= 4: # No hace falta 'and promedio < 7'
+        res = 2            # porque si fuera >= 7, ya habría entrado al 'if' de arriba
+        return res
+    else:
+        return res
+    
+print("[8, 9, 7] ->", resultadoMateria([8, 9, 7]))
+print("[4, 5, 6] ->", resultadoMateria([4, 5, 6]))
+print("[10, 10, 1] ->", resultadoMateria([10, 10, 1]))
+print("[2,2,3] ->", resultadoMateria([2,2,3]))
+
+
+#ej 4
+""" Dada una lista de tuplas, que representa un historial de movimientos en una cuenta bancaria, devolver el saldo actual. Asumir que el salgo inicial es 0. Las tuplas tienen una letra que nos indica el tipo de movimiento "I" para ingreso de dinero y "R" para retiro de dinero, y además el monto de cada operación. Por ejemplo, si la lista de tuplas es [("I", 2000), ("R", 20), ("R", 1000), ("I", 300)] entonces el salgo actual es 1280.
+
+problema saldoActual (in movimientos: seq<Char x Z>) : Z {
+    requiere: { Para todo i∈Z si 0 <= i < |movimientos| -> movimientos [i]0 ∈ {"I", "R"} y movimientos[i]1 > 0 }
+    asegura: { res = sumatoria desde i hasta ingresos con movimientos[i]1 - sumatoria desde i hasta retiros de movimientos[i]1 }
+}
+
+"""
+
+
+def saldoActual(movimientos: list[(str, int)]) -> int:
+    saldo: int = 0
+
+    for transaccion in movimientos:
+        accion: str = transaccion[0] 
+        monto: int = transaccion[1]
+        if accion.upper() == "I":
+            saldo += monto
+        elif accion.upper() == "R":
+            saldo -= monto
+
+    return saldo
+
+
+print("Esta semana ingresé $2300 y retiré $1020\nSaldo actual -> ", saldoActual([("I", 2000), ("R", 20), ("R", 1000), ("I", 300)]))
+
+# ej 5 - Analizando parámetros in y out vs resultado
+
+""" (1)
+problema pertenece_a_cada_uno_version_1 (in s: seq<seq<Z>>, in e: Z, out res: seq<Bool>) {
+    requiere: { True }
+    asegura: { |res| >= |s| }
+    asegura: { Para todo i∈Z si 0<= i < |s| -> ( res[i]=true <-> pertenece(s[i], e) )  }
+}
+
+Nota: reutilizar la función pertenece() implementada previamente para listas
+
+"""
+
+def pertenece_a_cada_uno_version_1 (matriz: list[list[int]], numero: int, res: list[bool]) -> None:
+    res.clear()
+
+    for fila in matriz:
+        if pertenece_for(fila, numero):
+            res.append(True)
+        else:
+            res.append(False)
+
+# --- Pruebas ---
+listas_de_notas: list[list[int]] = [[2, 4, 6], [7, 10], [1, 4, 9], []]
+numero_a_buscar: int = 4
+
+# 1. Creamos la lista 'res' ANTES de llamar a la función.
+#    Incluso puede tener "basura" o estar vacía.
+mi_resultado: list[bool] = [True, True, True, True, True, True] 
+
+print(f" 'mi_resultado' ANTES de la función: {mi_resultado}")
+
+# 2. Llamamos a la función. NO hacemos "x = pertenece_..."
+#    Simplemente la llamamos.
+pertenece_a_cada_uno_version_1(listas_de_notas, numero_a_buscar, mi_resultado)
+
+# 3. Verificamos 'mi_resultado' DESPUÉS. Ha sido modificada.
+print(f" 'mi_resultado' DESPUÉS de la función: {mi_resultado}")
+
+""" (2)
+
+problema pertenece_a_cada_uno_version_2 (in s: seq<seq<Z>>, in e: Z, out res: seq<Bool>) {
+    requiere: { True }
+    asegura: { |res| = |s| }
+    asegura: { Para todo i∈Z si 0<= i < |s| -> ( res[i]=true <-> pertenece(s[i], e) )  }
+}
+
+-> Implementación de la versión 1 cumple contrato asegura |res| = |s|
+
+"""
+
+""" (3)
+problema pertenece_a_cada_uno_version_2 (in s: seq<seq<Z>>, in e: Z) : seq<Bool> {
+    requiere: { True }
+    asegura: { |res| = |s| }
+    asegura: { Para todo i∈Z si 0<= i < |s| -> ( res[i]=true <-> pertenece(s[i], e) )  }
+}
+
+"""
+def pertenece_a_cada_uno_version_2 (matriz: list[list[int]], e: int) -> list[bool]:
+    res: list[bool] = []
+
+    for fila in matriz:
+        if pertenece_for(fila, e):
+            res.append(True)
+        else:
+            res.append(False)
+
+    return res
+
