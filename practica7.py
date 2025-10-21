@@ -1,3 +1,5 @@
+import random
+
 # ej 1 Codificar en Python las siguientes funciones sobre secuencias.
 """(1)
 problema pertenece (in s:seq<Z>, in e:Z) : Bool {
@@ -789,3 +791,383 @@ def pertenece_a_cada_uno_version_2 (matriz: list[list[int]], e: int) -> list[boo
 
     return res
 
+# ej 6
+""" (1)
+problema es_matriz (in s: seq<seq<>Int>) : Bool {
+    requiere: { True }
+    asegura: { res = true <-> [s] }
+}
+"""
+def es_matriz (matriz: list[int]) -> bool:
+    if len(s) == 0:
+        return False
+    elif len(s[0]) == 0:
+        return False
+
+    cant_cols: int = len(s[0])
+
+    for fila in matriz:
+        if len(fila) != cant_cols:
+            return False
+    
+    return True
+
+""" (2)
+
+"""
+def filas_ordenadas(filas: list[list[int]], filas_ord: list[bool]):
+    filas_ord.clear()
+
+    for fila in filas:
+        if ordenados(fila):
+            filas_ord.append(True)
+        else:
+            filas_ord.append(False)
+
+    return filas_ord
+
+
+print("[[1,2,3], [1,2,3]] ->", filas_ordenadas([[1,2,3], [1,2,3]], []))
+print("[[1,2,3], [3,2,3]] ->", filas_ordenadas([[1,2,3], [3,2,3]], []))
+
+
+""" (3)
+"""
+def columna(matriz: list[list[int]], columna: int) -> list[int]:
+    res: list[int] = []
+    for fila in matriz:
+        res.append(fila[columna])
+
+    return res
+
+print("------")
+print("m = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] c = 1 ->", columna([[1, 2, 3], [4, 5, 6], [7, 8, 9]], 1))
+
+
+""" (4)
+m = [[1, 2, 3], [4, 5, 6], [10, 3, 9]] -> [True, False, True]
+"""
+def columna_ordenadas(matriz: list[list[int]]) -> list[bool]:
+    res: list[bool] = []
+
+    nro_cols: int = len(matriz[0])
+
+    for indice in range(nro_cols):
+        #extraigo columna en indice
+        col: list[int] = columna(matriz, indice)
+        #verifico si está ordenada
+        esta_ordenada: bool = ordenados(col)
+        #agrego resultado a la lista
+        res.append(esta_ordenada)
+
+    return res
+print("------")
+print("[[1, 2, 3], [4, 5, 6], [10, 3, 9]]->", columna_ordenadas([[1, 2, 3], [4, 5, 6], [10, 3, 9]]))
+
+
+""" (5)
+[[1,2,3],[3,2,1],[4,3,5]] -> [[1,3,4], [2,2,3],[3,1,5]]
+"""
+
+def transponer(matriz: list[list[int]]) -> list[list[int]]:
+    res: list[list[int]] = []
+
+    nro_cols = len(matriz[0])
+
+    for indice in range(nro_cols):
+        col: list[int] = columna(matriz, indice)
+        res.append(col)
+    
+    return res
+
+print("------")
+print("[[1,2,3],[3,2,1],[4,3,5]]->", transponer([[1,2,3],[3,2,1],[4,3,5]]))
+
+""" (6)
+Para determinar un ganador verificamos 8 líneas (3 horizontales, 3 verticales y 2 diagonales)
+Se puede modularizar con una función auxiliar que se encargue del chequeo, recibirá una matriz y un jugador ('X' o 'O'), devolverá True si el jugados tiene 3 en línea y False si no
+"""
+
+def hay_3_en_linea(matriz: list[list[str]], jugador: str) -> bool:
+    
+    # Chequeo Horizontal
+    for i in range(3):
+        if matriz[i][0] == jugador and matriz[i][1] == jugador and matriz[i][2] == jugador:
+            return True
+    
+    # Chequeo Vertical
+    for i in range(3):
+        if matriz[0][i] == jugador and matriz[1][i] == jugador and matriz[2][i] == jugador:
+            return True
+    
+    # Chequeo Diagonal (top-left a bottom-right)
+    if matriz[0][0] == jugador and matriz[1][1] == jugador and matriz[2][2] == jugador:
+        return True
+    
+    # Chequeo Diagonal (bottom-right a top-left)
+    if matriz[0][2] == jugador and matriz[1][1] == jugador and matriz[2][0] == jugador:
+        return True
+    
+    return False
+    
+    
+
+def quien_gana_tateti(matriz: list[list[int]]) -> int:
+    if hay_3_en_linea(matriz, "O"):
+        return 0
+    elif hay_3_en_linea(matriz, "X"):
+        return 1
+    else:
+        return 2
+    
+
+tablero_gana_x: list[list[str]] = [
+    ["X", "O", "O"],
+    [" ", "X", " "],
+    ["O", " ", "X"]
+]
+
+tablero_gana_o: list[list[str]] = [
+    ["X", "O", "X"],
+    ["X", "O", " "],
+    [" ", "O", " "]
+]
+
+tablero_empate: list[list[str]] = [
+    ["X", "O", "X"],
+    ["O", "O", "X"],
+    ["X", "X", "O"]
+]
+
+print(f"Gana X (Diagonal): {quien_gana_tateti(tablero_gana_x)}") 
+print(f"Gana O (Vertical): {quien_gana_tateti(tablero_gana_o)}") 
+print(f"Empate: {quien_gana_tateti(tablero_empate)}")
+
+
+# ej 7 - Programas interactivos ( con función input() ) que nos permita solicitar al usuario información cuando usamos las funciones
+
+"""(1)
+Implementar una función para contruir una lista con los nombre de mis estudiantes. La función solicitará al usuario los nombre hasta que ingrese la palabra "listo", o vacío (el usuario aprieta enter sin escribir nada). Devuelve la lista con todos los nombre ingresados
+
+"""
+
+def contruir_lista() -> list[str]:
+    lista_estudiantes: list[str] = []
+    solicitud: str = input("Ingrese nombre del primer estudiante: ")
+
+    while solicitud.lower() != "listo" and solicitud != "":
+        lista_estudiantes.append(solicitud)
+        solicitud = input("Ingrese otro nombre (para finalizar ingrese 'listo': ")
+    
+    return lista_estudiantes
+
+print(contruir_lista())
+
+""" (2)
+Implementar una función que devuelve una lista con el historial de un monedero electrónico (por ejemplo la SUBE). El usuario debe seleccionar en cada paso si quiere:
+    - "C" = Cargar créditos
+    - "D" = Descontar créditos
+    - "X" = Finalizar la simulación (termina el programa)
+En los casos de cargar y descontar créditos, el programa debe además solicitar el monto para la operación. Vamos a asumir que el monedero comienza en cero. Para guardar la información grabaremos el historial tuplas que representes los casos de cargar ("C", monto a cargar) y descontar crédito ("D", monto a descontar)
+"""
+
+def cargar(historial: list[tuple[str, int]]) -> None:
+    monto: int = int(input("Monto a ingresar: "))
+    historial.append(("C", monto))
+
+def descontar(historial: list[tuple[str, int]]) -> None:
+    monto: int = int(input("Monto a descontar: "))
+    historial.append(("D", monto))
+
+def hacer_movimientos(historial: list[tuple[str, int]]) -> None:
+    entradas_validas: list[str] = ["C", "D", "X"]
+
+    movimiento: str = input("Ingrese 'C' para cargar o 'D' para descontar o 'X' para finalizar: ").upper()
+
+    while movimiento != "X":
+
+        if movimiento == "C":
+            cargar(historial)
+
+        elif movimiento == "D":
+            descontar(historial)
+
+        else:
+            print("Entrada inválida. Intente nuevamente")
+        
+        movimiento: str = input("'C' para cargar o 'D' para descontar o 'X' para finalizar: ").upper()
+
+
+
+def historial_movimientos() -> list[tuple[str, int]]:
+    monto_billetera: int = 0
+    historial: list[tuple[str, int]] = []
+    
+    hacer_movimientos(historial)
+
+    return historial
+
+historial_final = historial_movimientos()
+print("Historial de movimientos:")
+print(historial_final)
+
+""" (3)
+Juego "7 y medio" -> deberá generar un número aleatorio entre 0 y 12 (excluyendo 8 y 9) y deberá luego de preguntarle al usuario si desea seguir sacando otra "carta" o plantarse. En este último caso el programa debe terminar.
+Los números aleatorios obtenidos deberán sumarse según eo número obtenido salvo por las "figuras" (10,11, 12) que sumarán medio punto cada una.
+El programa debe ir acumulando valores y si se pasa de 7.5 debe informar que el usuario ha perdido.
+Al finalizar la función devuelve el historial de "cartas" que hizo que el usuario gane o pierda
+Para generar números pseudo-aleatorios entre 1 y 12 utilizaremos la función random.randint(1,12). Al mismo tiempo, la función random.choice() puede ser de gran ayuda a la hora de repartir cartas
+"""
+
+"""
+¿qué estados necesito para que el juego funcione?
+    puntaje_actual: float = 0.0
+    historial_cartas: list[int] = []
+    jugando: bool = True
+
+-> Creamos un "mazo" como una lista, con random.choice saco una carta...
+    mazo: list[int] = [0,1,2,3,4,5,6,7,10,11,12]
+-> Usamos random.choice() para sacar una carta cumpliendo que no sea ni 8 ni 9
+
+
+funcion jugar_7_y_medio():
+    puntaje = 0.0
+    historial = []
+    jugando = True
+    mazo = [0,1,2,3,4,5,6,7,10,11,12]
+
+    mientras (jugando==True):
+        // Sacar carta
+        carta_nueva = random.choice(mazo)
+        historial.append(carta_nueva)
+
+        // Calcular puntaje de esa carta
+        si (carta_nueva >= 10):
+            puntos_carta = 0.5
+        sino:
+            puntos_carta = carta_nueva
+        puntaje += puntos_carta
+
+        // Mostrar estado
+        print("Sacaste: {carta_nueva}. Puntaje actual: {puntaje}.format(carta_nueva, puntaje))
+
+        // Chequear estado del juego (Lose / Win / Continue)
+        si (puntaje > 7.5):
+            print("Perdiste, te pasaste de 7.5")
+            jugando = False
+        sino si (puntaje == 7.5):
+            print("7 y medio ¡Ganaste!")
+            jugando = False
+        sino:
+            //preguntar al usuario
+            desicion = input("Deseas sacar otra carta (s) o plantarte (p)?")
+
+            si (decision.lower() == "p"):
+                print("Te plantaste con", puntaje)
+                jugando = False
+   
+    //fin del bucle
+    return historial
+
+"""
+
+def convertir_carta_a_puntos(carta: int) -> float:
+    if carta >= 10:
+        return 0.5
+    else:
+        return float(carta)
+
+def jugar_siete_y_medio() -> list[int]:
+    puntaje_actual: float = 0.0
+    historial_cartas: list[int] = []
+    jugando: bool = True
+    mazo: list[int] = [0,1,2,3,4,5,6,7,10,11,12]
+    print("Inicia el juego 7 medio. Inicias con 0 puntos")
+
+    while jugando:
+        #saco carta
+        carta: int = random.choice(mazo)
+        historial_cartas.append(carta)
+
+        #calculo puntaje
+        puntos: float = convertir_carta_a_puntos(carta)
+        puntaje_actual += puntos
+
+        #muestro estado
+        print("Sacaste un", carta)
+        print("Puntaje actual:", puntaje_actual)
+
+        #Chequeo estado del juego
+        if puntaje_actual > 7.5:
+            print("Perdiste, te pasaste de 7.5")
+            jugando = False
+        elif puntaje_actual == 7.5:
+            print("¡7 y medio! Ganaste")
+            jugando = False
+        else:
+            decision: str = input("¿Sacar otra carta (s) o plantarte (p): ").lower()
+
+            if decision == "p":
+                print("Te plantaste con", puntaje_actual)
+                jugando = False
+
+    #fin del juego
+    print("Juego finalizado")
+    return historial_cartas
+
+historial_partida = jugar_siete_y_medio()
+print(f"El historial de cartas de la partida fue: {historial_partida}")
+
+
+""" (4)
+Analizar la fortaleza de una contraseña. Solicitar al usuario que ingrese un texto que será su contraseña. Armar una función que tenga de parámetro de entrada un string con la contraseña a analizar, y la salida otro string con tres posibles valores: VERDE, AMARILLA y ROJA. Nota: en python la ñ/Ñ es considerado carácter especial y no se comporta como cualquier letra. String es seq<Char>. Consejo: para ver si una letra es mayúscula se puede ver si está ordenada entre A y Z
+    - La contraseña será VERDE si:
+        a) la longitud es mayor a 8 caracteres
+        b) tiene al menos 1 letra minúscula
+        c) tiene al menos 1 letra mayúscula
+        d) tiene al menos 1 dígito numérico (0..9)
+    - La contraseña sera ROJA si:
+        a) la longitud es menor a 5 caracteres
+    - En caso contrario será AMARILLA
+"""
+def es_minuscula(caracter: str) -> bool:
+    return caracter >= 'a' and caracter <= 'z'
+
+def es_mayuscula(caracter: str) -> bool:
+    return caracter >= 'A' and caracter <= 'Z'  
+
+def es_digito(caracter: str) -> bool:
+    return caracter >= '0' and caracter <= '9'
+
+def analizar_fortaleza(password: str) -> str:
+    #check ROJA
+    longitud: int = len(password)
+    if longitud < 5:
+        return "ROJA"
+    
+    #inicializo flags
+    tiene_minuscula: bool = False
+    tiene_mayuscula: bool = False
+    tiene_digito: bool = False
+
+    #recorro password y capturo flags
+    for caracter in password:
+        if es_minuscula(caracter):
+            tiene_minuscula = True
+        elif es_mayuscula(caracter):
+            tiene_mayuscula = True
+        elif es_digito(caracter):
+            tiene_digito = True
+    
+    #check VERDE
+    es_verde: bool = (longitud > 8 and tiene_minuscula and tiene_mayuscula and tiene_digito)
+
+    if es_verde:
+        return "VERDE"
+    else:
+        return "AMARILLA"
+
+print("Hola ->", analizar_fortaleza("Hola"))
+print("hola_2 ->", analizar_fortaleza("Hola_2"))
+print("Hola2 ->", analizar_fortaleza("Hola2"))
+print("Hola2_Hola ->", analizar_fortaleza("Hola2_Hola"))
