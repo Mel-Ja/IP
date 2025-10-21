@@ -799,12 +799,12 @@ problema es_matriz (in s: seq<seq<>Int>) : Bool {
 }
 """
 def es_matriz (matriz: list[int]) -> bool:
-    if len(s) == 0:
+    if len(matriz) == 0:
         return False
-    elif len(s[0]) == 0:
+    elif len(matriz[0]) == 0:
         return False
 
-    cant_cols: int = len(s[0])
+    cant_cols: int = len(matriz[0])
 
     for fila in matriz:
         if len(fila) != cant_cols:
