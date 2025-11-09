@@ -1,5 +1,6 @@
 from queue import LifoQueue as Pila    
 from queue import Queue as Cola
+from typing import TextIO
 import random
 
 # PILAS
@@ -37,7 +38,7 @@ def generar_nros_al_azar(cantidad: int, desde: int, hasta: int) -> Pila[int]:
 
     return pila_nros_al_azar
 
-
+"""
 pila_resultado = generar_nros_al_azar(10, 5, 20)
 print("10 numeros entre 5 y 20 ->", pila_resultado) # print no muestra el contenido, muestra objeto Pila
 
@@ -47,7 +48,7 @@ while not pila_resultado.empty():
     print(pila_resultado.get())
 
 print(pila_resultado.empty())
-
+"""
 
 
 
@@ -77,7 +78,7 @@ def cantidad_elementos(pila: Pila) -> int:
 
     return cant_ele_pila
 
-
+"""
 print("--------------------")
 
 mi_pila = Pila()
@@ -86,7 +87,7 @@ mi_pila.put(2)
 mi_pila.put(3)
 resultado = cantidad_elementos(mi_pila)
 print(resultado)
-
+"""
 
 # ej 3
 """
@@ -112,6 +113,7 @@ def buscar_el_maximo(p: Pila[int]) -> int:
     
     return num_max
 
+"""
 mi_pila = Pila()
 mi_pila.put(10)
 mi_pila.put(5)
@@ -123,7 +125,7 @@ print("--------------------")
 
 max_obtenido = buscar_el_maximo(mi_pila)
 print("max encontrado en mi_pila=[10,5,99,420,1]:", max_obtenido)
-
+"""
 
 # ej 4
 """
@@ -154,7 +156,7 @@ def buscar_nota_max(p: Pila[tuple[str, int]]) -> tuple[str, int]:
     
     return max_tupla
 
-
+"""
 print("--------------------")
 
 pila_alumnos: Pila[tuple[str, int]] = Pila()
@@ -166,7 +168,7 @@ pila_alumnos.put(("Mica", 9))
 
 tupla_ganadora = buscar_nota_max(pila_alumnos)
 print(f"La tupla con la nota máxima es: {tupla_ganadora}")
-
+"""
 
 
 # ej 5
@@ -202,12 +204,12 @@ def esta_bien_balanceada(s: str) -> bool:
     else:
         return False
 
-
+"""
 print("--------------------")
 
 print("1 + (2 x 3 = (20 / 5)) ->", esta_bien_balanceada("1 + (2 x 3 = (20 / 5))"))
 print("1 + ) 2 x 3 ( () ->", esta_bien_balanceada("1 + ) 2 x 3 ( ()"))
-
+"""
 # ej 6
 """
 evaluar_exp("2 3 +") -> 2 + 3 -> 5 
@@ -285,7 +287,7 @@ def evaluar_expresion(s: str) -> float:
     resultado: str = pila_operando.get()
 
     return float(resultado)
-
+"""
 print("--------------------")
 
 expresion = "3 4 + 5 * 2 -"
@@ -293,7 +295,7 @@ print(f"Resultado de '{expresion}': {evaluar_expresion(expresion)}")
 
 expresion_2 = "10 2 / 3 +"
 print(f"Resultado de '{expresion_2}': {evaluar_expresion(expresion_2)}")
-
+"""
 
 # ej 7
 
@@ -329,9 +331,6 @@ def intercalar(p1: Pila, p2: Pila) -> Pila:
     return pila_intercalada
 
 
-print("--------------------")
-print("--------------------")
-
 # COLAS
 
 # ej 8
@@ -360,8 +359,6 @@ def cantidad_de_elementos(c: Cola) -> int:
     return cta_elementos
 
 
-print("--------------------")
-
 # ej 10
 def buscar_maximo(c: Cola[int]) -> int:
 
@@ -387,8 +384,6 @@ cola_maxima.put(40)
 print(buscar_maximo(cola_maxima))
 
 
-print("--------------------")
-
 # ej 11
 def buscar_nota_min(c: Cola[tuple[str, int]]) -> tuple[str, int]:
     c_aux: Cola[tuple[str, int]] = Cola()
@@ -407,8 +402,6 @@ def buscar_nota_min(c: Cola[tuple[str, int]]) -> tuple[str, int]:
         c.put(c_aux.get())
     
     return tupla_minima
-
-print("--------------------")
 
 #ej 12
 def intercalar_cola(c1: Cola, c2: Cola) -> Cola:
@@ -432,8 +425,6 @@ def intercalar_cola(c1: Cola, c2: Cola) -> Cola:
         c2.put(c2_aux.get())
     
     return cola_intercalada
-
-print("--------------------")
 
 # ej 13 - (1)
 
@@ -576,3 +567,242 @@ def atencion_a_clientes(c: Cola[tuple[str, int, bool, bool]]) -> Cola[tuple[str,
     
 
     return cola_ordenada
+
+# DICCIONARIOS
+
+#ej 16
+"""
+
+[('Mel', 8.5),('Sole', 8.0), ('Mel', 10.0)] -> {'Mel': 9.25, 'Sole': 8.0}
+"""
+
+
+def calcular_promedio_por_estudiante(notas: list[tuple[str, float]]) -> dict[str, list[float]]:
+    notas_estudiantes: dict[str, list[float]] = {}
+    promedio_estudiantes: dict[str, float] = {}
+
+    for nota_estudiante in notas:
+        nombre: str = nota_estudiante[0]
+        nota: float = nota_estudiante[1]
+
+        if nombre not in notas_estudiantes.keys():
+            notas_estudiantes[nombre] = [nota]
+        else:
+            notas_estudiantes[nombre].append(nota)
+    
+    for nombre, notas in notas_estudiantes.items():
+        suma_notas: float = 0.0
+        promedio: float = 0.0
+
+        for nota in notas:
+            suma_notas += nota
+
+        promedio = suma_notas / len(notas)
+
+        promedio_estudiantes[nombre] = promedio
+    
+    return promedio_estudiantes
+
+
+# ej 17
+"""
+historiales: dict[str, Pila[str]] -> {'nombre_usuario': Pila[str]}
+
+crear un diccionarios llamado historiales, almacenará el historial de navegación de cada usuario
+Claves del diccionario serán nombreUsurio y los valores serán pilas de String
+
+historiales = { 'melUsuario': Pila['www.google.com', 'www.infobae.com'], 'tomUsuario': Pila['www.perros.com', 'wwww.noticias.com] }
+
+
+
+"""
+
+def visitar_sitio(historiales: dict[str, Pila[str]], usuario: str, sitio: str) -> None:
+    
+    if usuario not in historiales.keys():
+        nueva_pila: Pila[str] = Pila()
+        nueva_pila.put(sitio)
+        historiales[usuario] = nueva_pila
+    else:
+        historiales[usuario].put(sitio)
+
+
+def navegar_atras(historiales: dict[str, Pila[str]], usuario: str) -> str:
+    return historiales[usuario].get()
+
+#ej 18
+""" Sistema de gestión de inventario para una tienda de ropa. Ete sistema lleva registro de los productos en el inventario y hace operaciones como agregar nuevos productos, actualizar las existencias y calcular el valor total del inventario
+
+inventario: dict[str, dict[str, float || int] ] -> almacena toda la info de los productos {'nombreProducto': { 'precio': numero, 'cantidad': numero}}
+"""
+
+def agregar_producto(inventario: dict[str, dict[str, int | float]], nombre: str, precio: float, cantidad: int):
+    """ Agrego producto *nombre* al *inventario* y le agrego su precio con *precio* y cantidad con *cantidad
+    """
+    inventario[nombre] = {}
+    inventario[nombre]["precio"] = precio
+    inventario[nombre]["cantidad"] = cantidad
+
+def actualizar_stock(inventario: dict[str, dict[str, int | float]], nombre: str, cantidad: int):    
+    inventario[nombre]['cantidad'] = cantidad
+
+def actualizar_precio(inventario: dict[str, dict[str, int | float]], nombre: str, precio: float):
+    inventario[nombre]['precio'] = precio
+
+def calcular_valor_inventario(inventario: dict[str, dict[str, int | float]]) -> float:
+    valor_total_inventario: float = 0.0
+
+    for info_producto in inventario.values():
+        precio_producto: float = info_producto['precio']
+        cantidad_producto: int = info_producto['cantidad']
+
+        valor_total_inventario += cantidad_producto * precio_producto   
+    
+    return valor_total_inventario
+
+# ARCHIVOS
+
+# ej 19
+def contar_lineas(nombre_archivo: str) -> int:
+    archivo: TextIO = open(nombre_archivo, "r", encoding="utf8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+    return len(lineas)
+
+def existe_palabra(nombre_archivo: str, palabra: str) -> bool:
+    archivo: TextIO = open(nombre_archivo, "r", encoding="utf8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+
+    res: bool = False
+    i: int = 0
+    while i < len(lineas) and not res:
+
+        if palabra in lineas[i]:
+            res = True
+        
+        i += 1
+
+    return res
+
+
+def apariciones_en_linea(linea: str, palabra: str) -> int:
+    longitud_linea: int = len(linea)
+    longitud_palabra: int = len(palabra)
+    apariciones_encontradas: int = 0
+
+    if longitud_palabra > longitud_linea:
+        return 0
+    
+
+    rango_busqueda: int = len(linea) - len(palabra) + 1
+
+    for indice_ventana in range(rango_busqueda):
+        """Controla el inicio de la 'ventana'"""
+        es_coincidencia: bool = True
+
+        for indice_caracter_palabra in range(longitud_palabra):
+            """"Compara letra por letra"""
+
+            indice_linea: int = indice_ventana + indice_caracter_palabra
+
+            caracter_linea: str = linea[indice_linea]
+            caracter_palabra: str = palabra[indice_caracter_palabra]
+
+            if caracter_linea != caracter_palabra:
+                # no coincide
+                es_coincidencia = False
+        if es_coincidencia:
+            apariciones_encontradas +=1
+
+    return apariciones_encontradas
+
+def cantidad_de_apariciones(nombre_archivo: str, palabra: str) -> int:
+    archivo: TextIO = open(nombre_archivo, "r", encoding="utf8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+
+    cantidad_apariciones: int = 0
+
+    for linea in lineas:
+        cantidad_apariciones += apariciones_en_linea(linea, palabra)
+    return cantidad_apariciones
+
+# ej 20
+""" Se consideran como palabras todas aquellas secuencias de caracteres deliminadas por espacios en blanco
+'soy key si'
+
+soy -> long_palabra_actual = 3 -> palabras_por_longitud[3] = 1
+k
+
+"""
+
+def tokenizar_linea(linea: str) -> list[str]:
+    """Separa linea en una lista de palabras, usando ' ' y \n como delimitadores"""
+    palabras: list[str] = []
+    palabra_actual: str = ""
+
+    delimitadores: list[str] = [' ', '\n']
+
+    for caracter in linea:
+        if caracter not in delimitadores:
+            palabra_actual += caracter
+        else:
+            if palabra_actual != "":
+                palabras.append(palabra_actual)
+                palabra_actual = ""
+        
+    if palabra_actual != "":
+        palabras.append(palabra_actual)
+
+    return palabras
+
+def agrupar_por_longitud(nombre_archivo: str,) -> dict[int, int]:
+    archivo: TextIO = open(nombre_archivo, "r", "utf8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+
+    palabras_por_longitud: dict[int, int] = {}
+
+    for linea in lineas:
+        lista_palabras: list[str] = tokenizar_linea(linea)
+
+        for palabra in lista_palabras:
+            longitud_palabra = len(palabra)
+            if longitud_palabra not in palabras_por_longitud:
+                palabras_por_longitud[longitud_palabra] = 1
+            else:
+                palabras_por_longitud[longitud_palabra] += 1
+
+    return palabras_por_longitud
+
+
+# ej 21
+
+def la_palabra_mas_frecuente(nombre_archivo: str) -> str:
+    archivo: TextIO = open(nombre_archivo, "r", "utf8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+
+    frecuencia_de_cada_palabra: dict[str, int] = {}
+    for linea in lineas:
+        lista_palabras: list[str] = tokenizar_linea(linea)
+
+        for palabra in lista_palabras:
+            if palabra not in frecuencia_de_cada_palabra:
+                frecuencia_de_cada_palabra[palabra] = 1
+            else:
+                frecuencia_de_cada_palabra[palabra] += 1
+
+
+    palabra_mas_frecuente: str = ""
+    frecuencia_max: int = 0
+    
+    for palabra, frecuencia in frecuencia_de_cada_palabra.items():
+        if frecuencia > frecuencia_max:
+            frecuencia_max = frecuencia
+            palabra_mas_frecuente = palabra 
+
+    return palabra_mas_frecuente
+
+# ej 22
