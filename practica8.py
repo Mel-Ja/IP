@@ -806,3 +806,223 @@ def la_palabra_mas_frecuente(nombre_archivo: str) -> str:
     return palabra_mas_frecuente
 
 # ej 22
+def es_comentario(linea: str) -> bool:
+    i: int = 0
+
+    while i < len(linea) and (linea[i] == " " or linea[i] == "\t"):
+        """ sigue iterando hasta que i sea menor a la longitud de la linea y hasta que la posicion donde está de la línea no sea un espacio y tabulación, si se cuenta con algo diferente a ello entonces corte el bucle
+        """
+        i+=1
+    
+    if i == len(linea):
+        """ esto significa que toda la linea eran espacios y/o tabulaciones"""
+        return 0
+    
+    return linea[i] == "#"
+
+def clonar_sin_comentarios(nombre_archivo_entrada: str, nombre_archivo_salida: str):
+    archivo: TextIO = open(nombre_archivo_entrada, "r", encoding="utf8")
+    lineas_filtradas: list[str] = []
+
+    for linea in archivo.readlines():
+        if not es_comentario(linea):
+            lineas_filtradas.append(linea)
+
+    archivo.close()
+
+    archivo_destino: TextIO = open(nombre_archivo_salida, "w", encoding="utf-8")
+    archivo_destino.truncate()
+
+    for linea in lineas_filtradas:
+        archivo_destino.write(linea)
+    
+    archivo_destino.close()
+
+# ej 23
+def eliminar_salto_linea(linea: str) -> str:
+    long_linea: int = len(linea)
+    if long_linea > 0 and linea[long_linea-1] == "\n":
+        nueva_linea: str = ""
+        for i in range(long_linea-1):
+            nueva_linea += linea[i]
+        
+        return nueva_linea
+
+    return linea
+
+def invertir_lineas(nombre_archivo: str, nombre_salida: str):
+    archivo: TextIO = open(nombre_archivo, "r", encoding="utf-8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+    
+    lineas_invertidas: list[str] = []
+    for pos in range(len(lineas)-1, -1, -1):
+        lineas_invertidas.append(lineas[pos])
+
+    archivo_destino: TextIO = open(nombre_salida, "w", encoding="utf-8")
+    archivo_destino.truncate()
+    
+    for pos in range(0, len(lineas_invertidas), 1):
+        linea_limpia = eliminar_salto_linea(lineas_invertidas[pos])
+        archivo_destino.write(linea_limpia)
+        if pos < len(lineas_invertidas) - 1:
+            archivo_destino.write("\n")
+
+    archivo_destino.close()
+
+# ej 24
+def agregar_frase_al_final(nombre_archivo: str, frase: str):
+    leer_archivo: TextIO = open(nombre_archivo, "r", encoding="utf-8")
+    contenido_archivo: str = leer_archivo.read()
+    leer_archivo.close()
+
+    escribir_archivo: TextIO = open(nombre_archivo, "a", encoding="utf-8")
+
+    if len(contenido_archivo) > 0 and contenido_archivo[len(contenido_archivo)-1] != "\n":
+        escribir_archivo.write("\n")
+    
+    escribir_archivo.write(frase)
+    escribir_archivo.close()
+
+# ej 25
+def sacar_salto_linea(linea: str) -> str:
+    tamaño: int = len(linea)
+    if tamaño > 0 and linea[tamaño-1] == "\n":
+        nueva_linea: str = ""
+        for pos in range(0, tamaño - 1, 1):
+            nueva_linea += linea[pos]
+        return nueva_linea
+    return linea
+
+def agregar_frase_al_principio(nombre_archivo: str, frase):
+    archivo: TextIO = open(nombre_archivo, "r", encoding="utf-8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+
+    escribir_archivo: TextIO = open(nombre_archivo, "w", encoding="utf-8")
+    escribir_archivo.write(frase + "\n")
+
+    for pos in range(0, len(lineas), 1):
+        linea_limpia: str = sacar_salto_linea(lineas[pos])
+        escribir_archivo.write(linea_limpia)
+        if pos < len(lineas)-1:
+            escribir_archivo.write("\n")
+    
+    escribir_archivo.close()
+
+# ej 26
+def es_caracter_legible(caracter: str) -> bool:
+    res: bool = True
+
+    if caracter >= 'a' and caracter <= 'z':
+        return res
+    elif caracter >= 'A' and caracter <= 'Z':
+        return res
+    elif caracter >= '0' and caracter <= '9':
+        return res
+    elif caracter == ' ' or caracter == '_':
+        return res
+    else:
+        res = False
+        return res
+
+
+def listar_textos_de_archivo(nombre_archivo: str) -> list[str]:
+    """
+    Lee un archivo (incluso binario) y extrae todas las secuciencias de texto legible que tengan 5 o más caracteres
+    """
+    archivo = open(nombre_archivo, "rb")
+    contenido_binario: bytes = archivo.read
+    archivo.close()
+
+    textos_encontrados: list[str] = []
+
+    texto_actual: str = ""
+
+    for byte in contenido_binario:
+        #covertir el byte (que es un int) em im caracter (str)
+        caracter: str = chr(byte)
+        if es_caracter_legible(caracter):
+            texto_actual += caracter
+        else:
+            #encontramos un byte no deseado
+            if len(texto_actual) > 5:
+                textos_encontrados.append(texto_actual)
+            texto_actual = ""
+    
+    if len(texto_actual) >= 5:
+        textos_encontrados.append(texto_actual)
+    
+    return textos_encontrados
+
+#ej 27
+""" 
+contenido nombre_archivo_notas: nro de LU (str), materia (str), fecha (str), nota (float)
+
+cada elemento de notas_de_estudiantes con formate CSV: LU, materia, fecha y nota
+"""
+def tokenizar_linea_csv(linea: str) -> list[str]:
+    tokens: list[str] = []
+    token_actual: str = ""
+
+    delimitadores: list[str] = [",", "\n"]
+
+    for caracter in linea:
+        if caracter not in delimitadores:
+            token_actual += caracter
+        else:
+            tokens.append(token_actual)
+            token_actual = ""
+    if token_actual != "":
+        tokens.append(token_actual)
+    
+    return tokens
+
+def obtener_lu_unico(lineas: list[str]) -> list[str]:
+    lus_unicos: list[str] = []
+    for linea in lineas:
+        datos: list[str] = tokenizar_linea_csv(linea)
+        if len(datos) > 0:
+            lu_actual: str = datos[0]
+            if lu_actual not in lus_unicos:
+                lus_unicos.append(lu_actual)
+    
+    return lus_unicos
+
+def promedio_estudiante(notas_de_estudiantes: list[str], lu: str) -> int:
+    suma_notas: float = 0.0
+    cantidad_notas: int = 0
+
+    for linea in notas_de_estudiantes:
+        datos: list[str] = tokenizar_linea_csv(linea)
+
+        if len(datos) == 4:
+            lu_actual: str = datos[0]
+            if lu_actual == lu:
+                nota_str: str = datos[3]
+                suma_notas += float(nota_str)
+                cantidad_notas += 1
+    
+    return suma_notas / cantidad_notas
+
+def calcular_promedio_por_estudiante(nombre_archivo_notas: str, nombre_archivo_promedios: str):
+    archivo: TextIO = open(nombre_archivo_notas, "r", encoding="utf-8")
+    lineas: list[str] = archivo.readlines()
+    archivo.close()
+
+    lista_lus: list[str] = obtener_lu_unico(lineas)
+
+    archivo_promedios: TextIO = open(nombre_archivo_promedios, "w", encoding="utf-8")
+    longitud_lista_lus: int = len(lista_lus)
+    for i in range(0, longitud_lista_lus, 1):
+        lu_actual: str = lista_lus[i]
+        promedio: float = promedio_estudiante(lineas, lu_actual)
+
+        promedio_a_escribir: str = lu_actual + ', ' + str(promedio)
+        archivo_promedios.write(promedio_a_escribir)
+
+        if i < longitud_lista_lus - 1:
+            archivo_promedios.write("\n")
+
+    archivo_promedios.close()
+
